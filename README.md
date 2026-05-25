@@ -17,8 +17,14 @@ Most people agree to privacy policies without reading them. This app makes the f
 - Frontend: React, Vite, Tailwind CSS, React Router, Axios
 - Backend: FastAPI, Uvicorn, Pydantic
 - Policy fetching: httpx, BeautifulSoup4
-- AI analysis: Anthropic API
+- AI analysis: Qwen via DashScope's OpenAI-compatible API
 - Deployment: Vercel for frontend, Railway for backend
+
+## Current Prototype Status
+
+The backend is ready for the prototype frontend. It can accept pasted policy text, send it to Qwen, and return structured JSON with a summary, privacy score, verdict, category breakdown, notable clauses, and plain-English preference flags.
+
+URL fetching is implemented, but pasted-text mode is the safest path for the GA6 demo because it avoids live-site scraping failures.
 
 ## Repository Structure
 
@@ -61,7 +67,7 @@ Install these before working on the project:
 - Node.js 18 or newer
 - npm
 - Python 3.10 or newer
-- An Anthropic API key
+- A Qwen API key from DashScope Model Studio
 
 ## Frontend Setup
 
@@ -120,8 +126,7 @@ From the repository root:
 cd backend
 python -m venv venv
 source venv/bin/activate
-pip install fastapi uvicorn httpx beautifulsoup4 anthropic python-dotenv pydantic
-pip freeze > requirements.txt
+pip install -r requirements.txt
 ```
 
 On Windows, activate the virtual environment with:
@@ -139,7 +144,8 @@ cp .env.example .env
 Expected backend env variable:
 
 ```env
-ANTHROPIC_API_KEY=sk-ant-...
+QWEN_API_KEY=your-dashscope-key
+QWEN_API_BASE=https://dashscope-intl.aliyuncs.com/compatible-mode/v1
 ```
 
 Run the backend:
@@ -170,16 +176,43 @@ Example request body:
 }
 ```
 
+## Backend Verification
+
+With the backend running, verify the health endpoint:
+
+```bash
+curl http://localhost:8000/health
+```
+
+Expected response:
+
+```json
+{"status":"ok"}
+```
+
+Then verify the Qwen analysis flow with pasted text:
+
+```bash
+curl -s -X POST http://localhost:8000/analyze \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "We collect your name, email address, device information, location data, and usage activity. We may share this information with advertising partners and analytics providers. You may request deletion of your data by contacting support.",
+    "preferences": ["location", "third_party", "ads"]
+  }' | python -m json.tool
+```
+
+Expected result: formatted JSON containing `summary`, `score`, `verdict`, `categories`, `clauses`, and sentence-style `flags`.
+
 ## Core Backend Files To Build
 
 | File | Status | Purpose |
 |---|---|---|
-| `backend/main.py` | To do | Create FastAPI app, configure CORS, include routes, expose `/health` |
-| `backend/models/schemas.py` | To do | Define `AnalyzeRequest`, `AnalyzeResponse`, `Category`, and `Clause` |
-| `backend/routes/analyze.py` | To do | Validate input, fetch or accept text, call AI service, return structured summary |
-| `backend/services/fetcher.py` | To do | Fetch policy HTML and extract readable text |
-| `backend/services/chunker.py` | To do | Truncate long policy text for prototype scope |
-| `backend/services/ai.py` | To do | Send policy text to Anthropic and parse JSON response |
+| `backend/main.py` | Done | Create FastAPI app, configure CORS, include routes, expose `/health` |
+| `backend/models/schemas.py` | Done | Define `AnalyzeRequest`, `AnalyzeResponse`, `Category`, and `Clause` |
+| `backend/routes/analyze.py` | Done | Validate input, fetch or accept text, call AI service, return structured summary |
+| `backend/services/fetcher.py` | Done | Fetch policy HTML and extract readable text |
+| `backend/services/chunker.py` | Done | Truncate long policy text for prototype scope |
+| `backend/services/ai.py` | Done | Send policy text to Qwen and parse JSON response |
 
 ## Core Frontend Files To Build
 
@@ -269,14 +302,14 @@ Pre-test each URL before demo day. If a site blocks fetching or needs JavaScript
 uvicorn main:app --host 0.0.0.0 --port $PORT
 ```
 
-4. Add `ANTHROPIC_API_KEY`.
+4. Add `QWEN_API_KEY` and `QWEN_API_BASE`.
 5. Deploy and copy the public URL into the Vercel frontend environment variables.
 
 ## Team Workflow
 
 Recommended split:
 
-- Backend teammate: schemas, fetcher, chunker, Anthropic analysis service, `/analyze` route
+- Backend teammate: schemas, fetcher, chunker, Qwen analysis service, `/analyze` route
 - Frontend teammate: input panel, preference modal, summary/results UI
 - Integration teammate: environment setup, error handling, demo test policies, deployment
 
