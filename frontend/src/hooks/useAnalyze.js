@@ -22,5 +22,10 @@ export function useAnalyze() {
     }
   }
 
-  return { analyze, result, loading, error }
+  function reset() {
+    setResult(null)
+    setError(null)
+  }
+
+  return { analyze, result, loading, error, reset }
 }

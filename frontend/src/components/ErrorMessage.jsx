@@ -4,7 +4,7 @@ export default function ErrorMessage({ message }) {
   }
 
   return (
-    <div className="rounded-3xl border border-red-300 bg-red-50 p-4 text-sm font-medium text-red-900">
+    <div className="mt-3 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-900">
       {message}
     </div>
   )

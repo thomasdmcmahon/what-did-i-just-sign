@@ -12,8 +12,8 @@ export default function UploadPopover({ selectedFilename, onFileText }) {
   }
 
   return (
-    <div className="absolute bottom-16 left-0 w-64 rounded-2xl border border-slate-300 bg-white p-3 text-sm text-slate-700">
-      <label className="block cursor-pointer rounded-xl border border-dashed border-slate-300 px-3 py-3 text-center font-medium">
+    <div className="absolute bottom-16 left-0 z-20 w-64 rounded-2xl border border-indigo-100 bg-white p-3 text-sm text-slate-700 shadow-[0_12px_36px_rgba(28,53,87,0.16)]">
+      <label className="block cursor-pointer rounded-xl border border-dashed border-indigo-200 bg-indigo-50/40 px-3 py-3 text-center font-bold text-[#1c3557]">
         Choose text file
         <input
           type="file"

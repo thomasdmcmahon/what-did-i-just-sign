@@ -8,8 +8,8 @@ function trimSummary(summary) {
 
 export default function SummaryParagraph({ summary }) {
   return (
-    <section className="rounded-3xl border border-slate-300 bg-white p-4">
-      <p className="text-base leading-7 text-slate-800">{trimSummary(summary)}</p>
+    <section className="rounded-2xl border border-slate-200 bg-white p-4">
+      <p className="text-sm leading-6 text-slate-600">{trimSummary(summary)}</p>
     </section>
   )
 }

@@ -11,7 +11,7 @@ export default function ThirdPartyMap({ recipients }) {
         {recipients.map((recipient) => (
           <span key={recipient} className="flex items-center gap-2">
             <span className="text-slate-400">→</span>
-            <span className="rounded-full border border-orange-300 bg-orange-50 px-3 py-2">
+            <span className="rounded-full border border-indigo-200 bg-indigo-50 px-3 py-2">
               {recipient}
             </span>
           </span>
