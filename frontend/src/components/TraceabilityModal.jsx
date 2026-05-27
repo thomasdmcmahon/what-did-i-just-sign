@@ -2,7 +2,7 @@ import { ChevronRight, X } from "lucide-react"
 
 import { modalHighlight } from "../utils/formatters.js"
 
-export default function TraceabilityModal({ clause, onClose }) {
+export default function TraceabilityModal({ clause, onClose, t }) {
   if (!clause) {
     return null
   }
@@ -19,13 +19,13 @@ export default function TraceabilityModal({ clause, onClose }) {
             type="button"
             onClick={onClose}
             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-slate-100"
-            aria-label="Back"
+            aria-label={t.back}
           >
             <ChevronRight className="h-4 w-4 rotate-180 text-slate-500" />
           </button>
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">
-              Policy excerpt
+              {t.policyExcerpt}
             </p>
             <h2 className="text-lg font-black text-slate-950">{clause.title}</h2>
           </div>
@@ -33,21 +33,21 @@ export default function TraceabilityModal({ clause, onClose }) {
             type="button"
             onClick={onClose}
             className="ml-auto flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100"
-            aria-label="Close evidence"
+            aria-label={t.closeEvidence}
           >
             <X className="h-4 w-4 text-slate-500" />
           </button>
         </div>
 
         <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
-          Source text
+          {t.sourceText}
         </p>
         <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-7 text-slate-800">
           <span className={modalHighlight}>{clause.original}</span>
         </div>
 
         <p className="mb-3 mt-5 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
-          Plain-English explanation
+          {t.plainEnglish}
         </p>
         <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
           <p className="text-sm leading-6 text-slate-700">{clause.simplified}</p>

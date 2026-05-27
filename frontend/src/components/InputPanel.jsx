@@ -15,6 +15,7 @@ export default function InputPanel({
   setUploadedFileName,
   onSubmit,
   loading,
+  t,
 }) {
   const hasInput = inputMode === "url" ? urlInput.trim() : textInput.trim()
 
@@ -30,6 +31,7 @@ export default function InputPanel({
         <UploadPopover
           selectedFilename={uploadedFileName}
           onFileText={handleUploadText}
+          t={t}
         />
       ) : null}
 
@@ -38,7 +40,7 @@ export default function InputPanel({
           type="button"
           onClick={() => setUploadOpen(!uploadOpen)}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-500 transition active:scale-95"
-          aria-label="Upload policy text"
+          aria-label={t.uploadAria}
         >
           <Plus className="h-5 w-5" />
         </button>
@@ -49,7 +51,7 @@ export default function InputPanel({
             onClick={() => setInputMode(inputMode === "url" ? "text" : "url")}
             className="rounded-full border border-indigo-100 bg-white/70 px-2.5 py-1 text-[11px] font-bold text-[#1c3557]"
           >
-            {inputMode === "url" ? "URL" : "Text"}
+            {inputMode === "url" ? t.inputModeUrl : t.inputModeText}
           </button>
 
           {inputMode === "url" ? (
@@ -57,7 +59,7 @@ export default function InputPanel({
               type="url"
               value={urlInput}
               onChange={(event) => setUrlInput(event.target.value)}
-              placeholder="Paste URL..."
+              placeholder={t.pasteUrl}
               className="min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400"
             />
           ) : (
@@ -65,7 +67,7 @@ export default function InputPanel({
               type="text"
               value={textInput}
               onChange={(event) => setTextInput(event.target.value)}
-              placeholder="Paste policy text..."
+              placeholder={t.pasteText}
               className="min-w-0 flex-1 bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400"
             />
           )}
@@ -76,7 +78,7 @@ export default function InputPanel({
           onClick={onSubmit}
           disabled={!hasInput || loading}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-[#1c3557] to-[#5b3fe8] text-white transition active:scale-95 disabled:cursor-not-allowed disabled:from-slate-300 disabled:to-slate-300"
-          aria-label="Analyze policy"
+          aria-label={t.analyzeAria}
         >
           {loading ? "..." : <ArrowRight className="h-5 w-5" />}
         </button>

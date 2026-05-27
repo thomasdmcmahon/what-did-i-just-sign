@@ -25,7 +25,7 @@ async def analyze(request: AnalyzeRequest):
     text = chunk_text(raw_text)
 
     try:
-        result = await analyze_policy(text, request.preferences)
+        result = await analyze_policy(text, request.preferences, request.language)
         return AnalyzeResponse.model_validate(result)
     except ValidationError as exc:
         raise HTTPException(

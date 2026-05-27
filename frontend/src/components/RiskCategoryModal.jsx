@@ -5,7 +5,6 @@ import {
   cardSeverityColor,
   severityBadge,
   severityDot,
-  severityLabel,
 } from "../utils/formatters.js"
 
 const icons = {
@@ -21,7 +20,7 @@ function findingsFromCategory(category) {
   return items.slice(0, 4)
 }
 
-export default function RiskCategoryModal({ category, onClose, onShowTrace }) {
+export default function RiskCategoryModal({ category, onClose, onShowTrace, t }) {
   if (!category) {
     return null
   }
@@ -57,7 +56,7 @@ export default function RiskCategoryModal({ category, onClose, onShowTrace }) {
             type="button"
             onClick={onClose}
             className="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-100"
-            aria-label="Close details"
+            aria-label={t.closeDetails}
           >
             <X className="h-4 w-4 text-slate-500" />
           </button>
@@ -68,14 +67,14 @@ export default function RiskCategoryModal({ category, onClose, onShowTrace }) {
             severityBadge[category.severity] || severityBadge.yellow
           }`}
         >
-          {severityLabel[category.severity] || severityLabel.yellow}
+          {t.severityLabels[category.severity] || t.severityLabels.yellow}
         </span>
 
         <p className="mt-4 text-sm leading-6 text-slate-700">{category.summary}</p>
 
         <div className="mt-5">
           <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
-            Key findings
+            {t.keyFindings}
           </p>
           <div className="grid gap-2">
             {findings.map((finding, index) => (
@@ -96,14 +95,14 @@ export default function RiskCategoryModal({ category, onClose, onShowTrace }) {
           </div>
         </div>
 
-        {isThirdParty ? <ThirdPartyMap recipients={category.recipients || []} /> : null}
+        {isThirdParty ? <ThirdPartyMap recipients={category.recipients || []} t={t} /> : null}
 
         <button
           type="button"
           onClick={onShowTrace}
           className="mt-5 w-full rounded-2xl bg-gradient-to-br from-[#1c3557] to-[#5b3fe8] px-5 py-3.5 text-sm font-black text-white shadow-[0_4px_16px_rgba(91,63,232,0.28)] active:scale-[0.98]"
         >
-          Show Me Where
+          {t.showMeWhere}
         </button>
       </div>
     </div>

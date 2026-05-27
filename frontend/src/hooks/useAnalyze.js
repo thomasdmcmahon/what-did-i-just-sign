@@ -8,7 +8,7 @@ export function useAnalyze() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
 
-  async function analyze(payload) {
+  async function analyze(payload, fallbackError) {
     setLoading(true)
     setError(null)
 
@@ -16,7 +16,7 @@ export function useAnalyze() {
       const response = await axios.post(`${API_URL}/analyze`, payload)
       setResult(response.data)
     } catch (e) {
-      setError(e.response?.data?.detail || "Something went wrong while analyzing the policy.")
+      setError(e.response?.data?.detail || fallbackError || "Something went wrong while analyzing the policy.")
     } finally {
       setLoading(false)
     }

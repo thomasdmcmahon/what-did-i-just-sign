@@ -1,17 +1,9 @@
 import { useEffect, useState } from "react"
 import { Shield } from "lucide-react"
 
-const loadingMessages = [
-  "Reading policy...",
-  "Fetching info...",
-  "Analyzing data collection...",
-  "Checking third-party sharing...",
-  "Reviewing retention details...",
-  "Creating a privacy score...",
-]
-
-export default function LoadingState() {
+export default function LoadingState({ t }) {
   const [messageIndex, setMessageIndex] = useState(0)
+  const loadingMessages = t.loadingMessages
 
   useEffect(() => {
     const intervalId = window.setInterval(() => {
@@ -19,7 +11,7 @@ export default function LoadingState() {
     }, 1400)
 
     return () => window.clearInterval(intervalId)
-  }, [])
+  }, [loadingMessages.length])
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-10 px-8 py-16 text-center">
@@ -39,7 +31,7 @@ export default function LoadingState() {
           {loadingMessages[messageIndex]}
         </p>
         <p className="mt-2 text-sm font-medium text-slate-500">
-          Scanning for privacy risks...
+          {t.loadingSubtext}
         </p>
       </div>
 

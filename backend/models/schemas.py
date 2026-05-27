@@ -7,6 +7,7 @@ class AnalyzeRequest(BaseModel):
     url: Optional[str] = None
     text: Optional[str] = None
     preferences: List[str] = Field(default_factory=list)
+    language: str = "english"
 
     @model_validator(mode="after")
     def require_url_or_text(self):

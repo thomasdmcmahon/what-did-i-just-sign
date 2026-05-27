@@ -1,6 +1,6 @@
 import { Activity, ChevronRight, Clock, Crosshair, Eye, Users } from "lucide-react"
 
-import { cardSeverityColor, severityBadge, severityLabel } from "../utils/formatters.js"
+import { cardSeverityColor, severityBadge } from "../utils/formatters.js"
 
 const icons = {
   "Data Collection": Eye,
@@ -12,20 +12,20 @@ const icons = {
   "Cookies & Tracking": Crosshair,
 }
 
-function shorten(text) {
+function shorten(text, fallback) {
   if (!text) {
-    return "Tap for details."
+    return fallback
   }
 
   const sentence = text.split(".")[0]
   return sentence.length > 56 ? `${sentence.slice(0, 53)}...` : sentence
 }
 
-export default function RiskCardGrid({ categories, onSelect }) {
+export default function RiskCardGrid({ categories, onSelect, t }) {
   return (
     <section className="px-0">
       <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
-        Risk breakdown
+        {t.riskBreakdown}
       </p>
       <div className="grid grid-cols-2 gap-3">
         {categories.map((category) => {
@@ -49,7 +49,7 @@ export default function RiskCardGrid({ categories, onSelect }) {
                     severityBadge[category.severity] || severityBadge.yellow
                   }`}
                 >
-                  {severityLabel[category.severity] || severityLabel.yellow}
+                  {t.severityLabels[category.severity] || t.severityLabels.yellow}
                 </span>
               </div>
               <div>
@@ -57,7 +57,7 @@ export default function RiskCardGrid({ categories, onSelect }) {
                   {category.displayName || category.name}
                 </h2>
                 <p className="mt-1 text-[11px] leading-snug text-slate-600">
-                  {shorten(category.summary)}
+                  {shorten(category.summary, t.tapForDetails)}
                 </p>
               </div>
               <ChevronRight className="mt-auto h-3.5 w-3.5 self-end text-slate-400" />
