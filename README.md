@@ -6,8 +6,8 @@ Hi-fi prototype for COSE431 HCI: a privacy policy interpreter that accepts a URL
 
 Most people agree to privacy policies without reading them. This app makes the fine print easier to understand by:
 
-- Fetching a privacy policy from a URL or accepting pasted text
-- Summarizing the policy in plain English
+- Fetching a privacy policy in any language from a URL or accepting pasted text
+- Summarizing the policy in plain English, Chinese, Korean, or Norwegian (user selects langauge)
 - Scoring how invasive the policy is from `0-100`
 - Highlighting important clauses
 - Flagging concerns based on user preferences, such as location tracking, third-party sharing, children's data, ads, biometrics, or data retention
