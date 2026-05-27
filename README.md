@@ -6,7 +6,6 @@ The demo is designed to answer one question quickly: **is this policy privacy-fr
 
 ## What It Does
 
-<<<<<<< HEAD
 - Fetching a privacy policy in any language from a URL or accepting pasted text
 - Summarizing the policy in plain English, Chinese, Korean, or Norwegian (user selects langauge)
 - Scoring how invasive the policy is from `0-100`
