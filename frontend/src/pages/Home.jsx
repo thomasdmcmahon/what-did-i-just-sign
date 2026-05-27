@@ -183,12 +183,14 @@ export default function Home() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[linear-gradient(135deg,#dde1f0_0%,#eef0f7_50%,#e4e7f5_100%)] p-4 sm:p-8">
+    <main className="min-h-screen bg-white">
       <section
-        className={`${cardSpacing.page} relative min-h-[780px] w-full overflow-hidden rounded-[2.5rem] bg-white shadow-[0_32px_80px_rgba(28,53,87,0.18),0_8px_24px_rgba(28,53,87,0.10),0_0_0_1px_rgba(28,53,87,0.06)]`}
+        className={`${cardSpacing.page} relative min-h-screen w-full overflow-hidden bg-white lg:max-w-none`}
       >
-        <div className="flex items-center justify-between px-7 pb-1 pt-4">
-          <span className="text-xs font-bold tracking-wide text-slate-400">9:41</span>
+        <div className="flex items-center justify-between px-5 pb-1 pt-4 sm:px-7 lg:px-12 lg:pt-7">
+          <span className="text-xs font-bold tracking-wide text-slate-400 lg:text-sm lg:text-slate-500">
+            {t.appTitle}
+          </span>
           <LanguageSelector
             selectedLanguage={selectedLanguage}
             setSelectedLanguage={setSelectedLanguage}
@@ -199,27 +201,34 @@ export default function Home() {
         </div>
 
         {!result && !loading ? (
-          <div className="flex min-h-[720px] flex-1 flex-col overflow-hidden">
-            <div className="flex flex-1 flex-col items-center justify-center px-8 pb-4 pt-8 text-center">
-              <PrivacyIconCloud />
-
-              <h1 className="text-[1.75rem] font-black leading-tight text-[#12152a]">
-                {t.appTitle}
-              </h1>
-              <p className="mt-3 text-sm font-black uppercase tracking-[0.18em] text-[#5b3fe8]/70">
-                {t.landingEyebrow}
-              </p>
-              <RotatingSubtitle t={t} />
+          <div className="flex min-h-[calc(100vh-52px)] flex-1 flex-col overflow-hidden lg:grid lg:min-h-[calc(100vh-72px)] lg:grid-cols-[minmax(0,1fr)_minmax(360px,46vw)] lg:items-center lg:gap-8 lg:px-12 lg:pb-7">
+            <div className="flex flex-1 flex-col items-center justify-center px-8 pb-4 pt-8 text-center lg:order-2 lg:px-0 lg:pt-0">
+              <PrivacyIconCloud className="relative mb-5 h-72 w-full max-w-[420px] lg:mb-0 lg:h-[min(58vh,460px)] lg:max-w-none" />
             </div>
 
-            <div className="px-5 pb-10">
-              <InputPanel {...inputPanelProps} />
-              <ErrorMessage message={error} />
-              <p className="mt-3 text-center text-[11px] font-medium text-slate-400">
-                {t.resultsShownIn}{" "}
-                <span className="font-black text-[#5b3fe8]">
-                  {selectedLanguage.nativeName}
-                </span>
+            <div className="px-5 pb-10 lg:order-1 lg:px-0 lg:pb-0">
+              <div className="mb-8 text-center lg:mb-7 lg:text-left">
+                <h1 className="text-[1.85rem] font-black leading-tight text-[#12152a] lg:text-[clamp(3rem,5vw,5.8rem)]">
+                  {t.appTitle}
+                </h1>
+                <p className="mt-3 text-sm font-black uppercase tracking-[0.18em] text-[#5b3fe8]/70 lg:text-base">
+                  {t.landingEyebrow}
+                </p>
+                <RotatingSubtitle t={t} />
+              </div>
+
+              <div className="mx-auto max-w-[420px] lg:mx-0 lg:max-w-xl">
+                <InputPanel {...inputPanelProps} />
+                <ErrorMessage message={error} />
+                <p className="mt-3 text-center text-[11px] font-medium text-slate-400 lg:text-left">
+                  {t.resultsShownIn}{" "}
+                  <span className="font-black text-[#5b3fe8]">
+                    {selectedLanguage.nativeName}
+                  </span>
+                </p>
+              </div>
+              <p className="mt-8 hidden max-w-lg text-sm font-medium leading-7 text-slate-500 lg:block">
+                {t.aiFooter}
               </p>
             </div>
           </div>
@@ -228,8 +237,8 @@ export default function Home() {
         {loading ? <LoadingState t={t} /> : null}
 
         {!loading && result ? (
-          <div className="flex flex-1 flex-col overflow-y-auto px-5 pb-8 [scrollbar-width:none]">
-            <div className="flex items-center justify-between py-4">
+          <div className="flex flex-1 flex-col overflow-y-auto px-5 pb-8 [scrollbar-width:none] lg:min-h-[calc(100vh-72px)] lg:overflow-visible lg:px-12 lg:pb-7">
+            <div className="flex items-center justify-between py-4 lg:pb-5 lg:pt-6">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">
                   {t.policyScan}
@@ -245,19 +254,24 @@ export default function Home() {
               </button>
             </div>
 
-            <div className="grid gap-4">
-              <ErrorMessage message={error} />
-              <SummaryHeader
-                score={result.score}
-                verdict={result.verdict}
-                policyName={currentPolicyLabel}
-                t={t}
-              />
-              <RiskCardGrid categories={dashboardCategories} onSelect={setActiveCategory} t={t} />
-              <SummaryParagraph summary={result.summary} />
-              <p className="px-4 text-center text-[11px] font-medium leading-5 text-slate-400">
-                {t.aiFooter}
-              </p>
+            <ErrorMessage message={error} />
+
+            <div className="grid gap-4 lg:grid-cols-[minmax(340px,390px)_minmax(0,1fr)] lg:items-start lg:gap-5">
+              <div className="lg:sticky lg:top-6">
+                <SummaryHeader
+                  score={result.score}
+                  verdict={result.verdict}
+                  policyName={currentPolicyLabel}
+                  t={t}
+                />
+              </div>
+              <div className="grid gap-4 lg:min-w-0">
+                <RiskCardGrid categories={dashboardCategories} onSelect={setActiveCategory} t={t} />
+                <SummaryParagraph summary={result.summary} />
+                <p className="px-4 text-center text-[11px] font-medium leading-5 text-slate-400 lg:px-0 lg:text-left">
+                  {t.aiFooter}
+                </p>
+              </div>
             </div>
           </div>
         ) : null}
