@@ -15,11 +15,11 @@ export default function RotatingSubtitle({ t }) {
   }, [])
 
   return (
-    <p className="mt-3 max-w-[285px] text-sm font-medium leading-6 text-slate-500">
+    <p className="mx-auto mt-3 max-w-[285px] text-center text-sm font-medium leading-6 text-slate-500 lg:mx-0 lg:max-w-none lg:whitespace-nowrap lg:text-left">
       {t.rotatingSecondLinePrefix ? (
         <>
-          <span className="block">{t.rotatingPrefix}</span>
-          <span className="block">
+          <span className="block lg:inline">{t.rotatingPrefix}</span>{" "}
+          <span className="block lg:inline">
             {t.rotatingSecondLinePrefix}{" "}
             <LanguageSlot activeLanguage={activeLanguage} languageIndex={languageIndex} />{" "}
             {t.rotatingSuffix}
@@ -27,11 +27,11 @@ export default function RotatingSubtitle({ t }) {
         </>
       ) : (
         <>
-          <span className="block">
+          <span className="block lg:inline">
             {t.rotatingPrefix}{" "}
             <LanguageSlot activeLanguage={activeLanguage} languageIndex={languageIndex} />
-          </span>
-          <span className="block">{t.rotatingSuffix}</span>
+          </span>{" "}
+          <span className="block lg:inline">{t.rotatingSuffix}</span>
         </>
       )}
     </p>
