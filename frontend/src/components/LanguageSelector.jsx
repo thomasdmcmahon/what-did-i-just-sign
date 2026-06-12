@@ -1,4 +1,4 @@
-import { Check, Globe } from "lucide-react"
+import { Check, ChevronDown } from "lucide-react"
 
 import { languages } from "../utils/languages.js"
 
@@ -8,24 +8,35 @@ export default function LanguageSelector({
   languageOpen,
   setLanguageOpen,
   t,
+  align = "right",
 }) {
   return (
-    <div className="relative">
+    <div className="relative inline-flex flex-col items-start gap-1.5">
+      <span className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">
+        {t.languageControlLabel}
+      </span>
       <button
         type="button"
         onClick={() => setLanguageOpen(!languageOpen)}
-        className="flex h-9 items-center gap-1.5 rounded-xl border border-slate-200 bg-white px-2.5 transition active:scale-95"
+        className="flex h-11 items-center gap-2 rounded-xl border border-indigo-200 bg-white px-3.5 text-left shadow-[0_4px_18px_rgba(91,63,232,0.08)] transition hover:border-indigo-300 hover:bg-indigo-50/60 focus:outline-none focus:ring-2 focus:ring-[#5b3fe8]/25 active:scale-95"
         aria-label={t.languageLabel}
+        aria-expanded={languageOpen}
       >
         <span className="text-base leading-none">{selectedLanguage.flag}</span>
-        <span className="text-[11px] font-black tracking-wide text-slate-700">
-          {selectedLanguage.code}
+        <span className="min-w-[6.5rem] text-sm font-black tracking-wide text-slate-800">
+          {selectedLanguage.nativeName}
         </span>
-        <Globe className="h-3 w-3 text-slate-400" />
+        <ChevronDown
+          className={`h-4 w-4 text-slate-400 transition ${languageOpen ? "rotate-180" : ""}`}
+        />
       </button>
 
       {languageOpen ? (
-        <div className="absolute right-0 top-11 z-30 w-44 overflow-hidden rounded-2xl border border-indigo-100 bg-white shadow-[0_12px_36px_rgba(28,53,87,0.16)]">
+        <div
+          className={`absolute top-[4.5rem] z-30 w-52 overflow-hidden rounded-2xl border border-indigo-100 bg-white shadow-[0_12px_36px_rgba(28,53,87,0.16)] ${
+            align === "left" ? "left-0" : "right-0"
+          }`}
+        >
           <div className="px-3 pb-1.5 pt-3">
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-400">
               {t.languageLabel}

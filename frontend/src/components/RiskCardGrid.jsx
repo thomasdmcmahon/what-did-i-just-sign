@@ -1,6 +1,6 @@
 import { Activity, ChevronRight, Clock, Crosshair, Eye, Users } from "lucide-react"
 
-import { cardSeverityColor, severityBadge } from "../utils/formatters.js"
+import { cardSeverityColor, severityBadge, summaryPoints } from "../utils/formatters.js"
 
 const icons = {
   "Data Collection": Eye,
@@ -12,13 +12,12 @@ const icons = {
   "Cookies & Tracking": Crosshair,
 }
 
-function shorten(text, fallback) {
+function shorten(text) {
   if (!text) {
-    return fallback
+    return ""
   }
 
-  const sentence = text.split(".")[0]
-  return sentence.length > 56 ? `${sentence.slice(0, 53)}...` : sentence
+  return text.length > 62 ? `${text.slice(0, 59)}...` : text
 }
 
 export default function RiskCardGrid({ categories, onSelect, t }) {
@@ -30,6 +29,7 @@ export default function RiskCardGrid({ categories, onSelect, t }) {
       <div className="grid grid-cols-2 gap-3">
         {categories.map((category) => {
           const Icon = icons[category.name] || Activity
+          const points = summaryPoints(category, t.tapForDetails, 3)
 
           return (
             <button
@@ -56,9 +56,17 @@ export default function RiskCardGrid({ categories, onSelect, t }) {
                 <h2 className="text-sm font-black leading-tight text-slate-950">
                   {category.displayName || category.name}
                 </h2>
-                <p className="mt-1 text-[11px] leading-snug text-slate-600">
-                  {shorten(category.summary, t.tapForDetails)}
-                </p>
+                <ul className="mt-2 space-y-1.5">
+                  {points.map((point, index) => (
+                    <li
+                      key={`${point}-${index}`}
+                      className="flex gap-1.5 text-[11px] leading-snug text-slate-600"
+                    >
+                      <span className="mt-[0.35rem] h-1 w-1 shrink-0 rounded-full bg-slate-400" />
+                      <span>{shorten(point)}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
               <ChevronRight className="mt-auto h-3.5 w-3.5 self-end text-slate-400" />
             </button>

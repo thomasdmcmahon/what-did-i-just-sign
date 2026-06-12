@@ -27,6 +27,7 @@ class Category(BaseModel):
     name: str
     severity: str
     summary: str
+    summary_points: List[str] = Field(default_factory=list)
 
 
 class AnalyzeResponse(BaseModel):

@@ -13,7 +13,7 @@ import SummaryHeader from "../components/SummaryHeader.jsx"
 import SummaryParagraph from "../components/SummaryParagraph.jsx"
 import TraceabilityModal from "../components/TraceabilityModal.jsx"
 import { useAnalyze } from "../hooks/useAnalyze.js"
-import { cardSpacing } from "../utils/formatters.js"
+import { cardSpacing, summaryPoints } from "../utils/formatters.js"
 import { languages } from "../utils/languages.js"
 import { getTranslations } from "../utils/translations.js"
 
@@ -60,7 +60,9 @@ function findClause(clauses, categoryName) {
 }
 
 function recipientsFor(category, t) {
-  const text = `${category.summary || ""} ${(category.clause?.simplified || "")}`.toLowerCase()
+  const text = `${category.summary || ""} ${summaryPoints(category).join(" ")} ${
+    category.clause?.simplified || ""
+  }`.toLowerCase()
   const recipients = []
 
   if (text.includes("microsoft")) recipients.push("Microsoft")
@@ -187,21 +189,8 @@ export default function Home() {
       <section
         className={`${cardSpacing.page} relative min-h-screen w-full overflow-hidden bg-white lg:max-w-none`}
       >
-        <div className="flex items-center justify-between px-5 pb-1 pt-4 sm:px-7 lg:px-12 lg:pt-7">
-          <span className="text-xs font-bold tracking-wide text-slate-400 lg:text-sm lg:text-slate-500">
-            {t.appTitle}
-          </span>
-          <LanguageSelector
-            selectedLanguage={selectedLanguage}
-            setSelectedLanguage={setSelectedLanguage}
-            languageOpen={languageOpen}
-            setLanguageOpen={setLanguageOpen}
-            t={t}
-          />
-        </div>
-
         {!result && !loading ? (
-          <div className="flex min-h-[calc(100vh-52px)] flex-1 flex-col overflow-hidden lg:grid lg:min-h-[calc(100vh-72px)] lg:grid-cols-[minmax(0,1fr)_minmax(360px,46vw)] lg:items-center lg:gap-8 lg:px-12 lg:pb-7">
+          <div className="flex min-h-screen flex-1 flex-col overflow-hidden lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(360px,46vw)] lg:items-center lg:gap-8 lg:px-12 lg:pb-7 lg:pt-7">
             <div className="flex flex-1 flex-col items-center justify-center px-8 pb-4 pt-8 text-center lg:order-2 lg:px-0 lg:pt-0">
               <PrivacyIconCloud className="relative mb-5 h-72 w-full max-w-[420px] lg:mb-0 lg:h-[min(58vh,460px)] lg:max-w-none" />
             </div>
@@ -215,17 +204,21 @@ export default function Home() {
                   {t.landingEyebrow}
                 </p>
                 <RotatingSubtitle t={t} />
+                <div className="mt-5 flex justify-center lg:justify-start">
+                  <LanguageSelector
+                    selectedLanguage={selectedLanguage}
+                    setSelectedLanguage={setSelectedLanguage}
+                    languageOpen={languageOpen}
+                    setLanguageOpen={setLanguageOpen}
+                    t={t}
+                    align="left"
+                  />
+                </div>
               </div>
 
               <div className="mx-auto max-w-[420px] lg:mx-0 lg:max-w-xl">
                 <InputPanel {...inputPanelProps} />
                 <ErrorMessage message={error} />
-                <p className="mt-3 text-center text-[11px] font-medium text-slate-400 lg:text-left">
-                  {t.resultsShownIn}{" "}
-                  <span className="font-black text-[#5b3fe8]">
-                    {selectedLanguage.nativeName}
-                  </span>
-                </p>
               </div>
               <p className="mt-8 hidden max-w-lg text-sm font-medium leading-7 text-slate-500 lg:block">
                 {t.aiFooter}
@@ -237,7 +230,7 @@ export default function Home() {
         {loading ? <LoadingState t={t} /> : null}
 
         {!loading && result ? (
-          <div className="flex flex-1 flex-col overflow-y-auto px-5 pb-8 [scrollbar-width:none] lg:min-h-[calc(100vh-72px)] lg:overflow-visible lg:px-12 lg:pb-7">
+          <div className="flex min-h-screen flex-1 flex-col overflow-y-auto px-5 pb-8 [scrollbar-width:none] lg:overflow-visible lg:px-12 lg:pb-7">
             <div className="flex items-center justify-between py-4 lg:pb-5 lg:pt-6">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">

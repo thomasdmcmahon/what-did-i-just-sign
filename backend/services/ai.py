@@ -21,7 +21,11 @@ JSON schema:
     {
        "name": "<category name>",
        "severity": "<'red' | 'yellow' | 'green'>",
-       "summary": "<1-2 sentence summary in the requested output language>"
+       "summary": "<one short sentence overview in the requested output language>",
+       "summary_points": [
+          "<short bullet point in the requested output language>",
+          "<short bullet point in the requested output language>"
+       ]
     }
   ],
    "clauses": [
@@ -36,6 +40,7 @@ JSON schema:
 }
 
 Categories to always include: Data Collection, Third-Party Sharing, Data Retention, User Rights, Cookies & Tracking.
+For every category, include 2-4 concise summary_points. Each point should be a short standalone statement, not a paragraph.
 Extract 4-7 notable clauses. Include 1-5 flags relevant to user preferences (empty array if no preferences given).
 The flags array must contain complete sentences in the requested output language. Do not return raw preference labels such as "location", "third_party", or "ads".
 Keep JSON keys exactly as shown.
@@ -43,7 +48,7 @@ Keep category name values exactly as the English category names listed above.
 Keep severity values in English as "red", "yellow", or "green".
 Keep verdict as one of the English enum values.
 Keep each "original" field as a verbatim excerpt from the source policy.
-All other generated user-facing text MUST be written in the requested output language, including summary, category summaries, clause titles, simplified clauses, and flags.
+All other generated user-facing text MUST be written in the requested output language, including summary, category summaries, summary_points, clause titles, simplified clauses, and flags.
 """
 
 LANGUAGE_NAMES = {
@@ -76,7 +81,7 @@ async def analyze_policy(text: str, preferences: List[str], language: str = "eng
                 "role": "user",
                 "content": (
                     f"Output language for every generated user-facing text field: {output_language}\n"
-                    "Do not use English for summary, category summaries, clause titles, simplified clauses, or flags unless the output language is English.\n"
+                    "Do not use English for summary, category summaries, summary_points, clause titles, simplified clauses, or flags unless the output language is English.\n"
                     f"User preferences (flag these if relevant): {prefs_str}\n\n"
                     f"Privacy policy text:\n{text}"
                 ),

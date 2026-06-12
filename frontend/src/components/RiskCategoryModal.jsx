@@ -5,6 +5,7 @@ import {
   cardSeverityColor,
   severityBadge,
   severityDot,
+  summaryPoints,
 } from "../utils/formatters.js"
 
 const icons = {
@@ -15,8 +16,8 @@ const icons = {
   "Overall Risk": Activity,
 }
 
-function findingsFromCategory(category) {
-  const items = [category.summary, ...(category.flags || [])].filter(Boolean)
+function findingsFromCategory(category, t) {
+  const items = [...summaryPoints(category, t.tapForDetails, 4), ...(category.flags || [])].filter(Boolean)
   return items.slice(0, 4)
 }
 
@@ -25,7 +26,7 @@ export default function RiskCategoryModal({ category, onClose, onShowTrace, t })
     return null
   }
 
-  const findings = findingsFromCategory(category)
+  const findings = findingsFromCategory(category, t)
   const isThirdParty = category.name.includes("Third") || category.displayName?.includes("Third")
   const Icon = icons[category.name] || Activity
 
@@ -69,8 +70,6 @@ export default function RiskCategoryModal({ category, onClose, onShowTrace, t })
         >
           {t.severityLabels[category.severity] || t.severityLabels.yellow}
         </span>
-
-        <p className="mt-4 text-sm leading-6 text-slate-700">{category.summary}</p>
 
         <div className="mt-5">
           <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-slate-500">

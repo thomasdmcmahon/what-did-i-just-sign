@@ -10,6 +10,33 @@ export const severityEmoji = {
   green: "🟢",
 }
 
+export function summaryPoints(category, fallback, limit = 4) {
+  const points = Array.isArray(category?.summary_points)
+    ? category.summary_points
+    : Array.isArray(category?.summaryPoints)
+      ? category.summaryPoints
+      : []
+
+  const cleaned = points
+    .map((point) => `${point}`.trim())
+    .filter(Boolean)
+
+  if (cleaned.length) {
+    return cleaned.slice(0, limit)
+  }
+
+  const summary = category?.summary?.trim()
+  if (!summary) {
+    return [fallback].filter(Boolean)
+  }
+
+  return summary
+    .split(/(?<=[.!?。！？])\s+/)
+    .map((point) => point.trim())
+    .filter(Boolean)
+    .slice(0, limit)
+}
+
 export function scoreLabel(score) {
   if (score >= 80) {
     return { label: "Privacy-Friendly", color: "text-green-700" }
