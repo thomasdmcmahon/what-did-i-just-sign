@@ -21,6 +21,18 @@ class Clause(BaseModel):
     original: str
     simplified: str
     severity: str
+    source_heading: str = ""
+    source_context: str = ""
+
+
+class KeyTerm(BaseModel):
+    term: str
+    definition: str
+
+
+class InlineExplanation(BaseModel):
+    phrase: str
+    explanation: str
 
 
 class Category(BaseModel):
@@ -28,12 +40,17 @@ class Category(BaseModel):
     severity: str
     summary: str
     summary_points: List[str] = Field(default_factory=list)
+    highlight_phrases: List[str] = Field(default_factory=list)
+    explanations: List[InlineExplanation] = Field(default_factory=list)
 
 
 class AnalyzeResponse(BaseModel):
     summary: str
+    summary_highlights: List[str] = Field(default_factory=list)
+    summary_explanations: List[InlineExplanation] = Field(default_factory=list)
     score: int
     verdict: str
     categories: List[Category]
     clauses: List[Clause]
     flags: List[str]
+    key_terms: List[KeyTerm] = Field(default_factory=list)

@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Info, X } from "lucide-react"
 
-import { scoreLabel } from "../utils/formatters.js"
+import ExplainedText from "./ExplainedText.jsx"
+import { inlineExplanations } from "../utils/formatters.js"
 
 const scoreTiers = [
   {
@@ -57,9 +58,28 @@ function ScoreRing({ score }) {
   )
 }
 
-export default function SummaryHeader({ score, verdict, policyName, t }) {
+function trimSummary(summary) {
+  return `${summary || ""}`
+    .split(/(?<=[.!?。！？])\s+/)
+    .filter(Boolean)
+    .slice(0, 5)
+    .join(" ")
+}
+
+export default function SummaryHeader({
+  score,
+  verdict,
+  policyName,
+  summary,
+  keyTerms = [],
+  explanations = [],
+  t,
+}) {
   const [showScoreInfo, setShowScoreInfo] = useState(false)
+  const summaryRef = useRef(null)
+  const [summaryScroll, setSummaryScroll] = useState({ height: 100, top: 0 })
   const displayVerdict = t.verdictLabels[verdict] || verdict
+  const tooltipTerms = [...keyTerms, ...inlineExplanations(explanations)]
   const overallMessage =
     score < 40
       ? t.overallMessages.high
@@ -69,8 +89,31 @@ export default function SummaryHeader({ score, verdict, policyName, t }) {
           ? t.overallMessages.manageable
           : t.overallMessages.low
 
+  function updateSummaryScroll() {
+    const element = summaryRef.current
+    if (!element) {
+      return
+    }
+
+    const maxScroll = element.scrollHeight - element.clientHeight
+    if (maxScroll <= 0) {
+      setSummaryScroll({ height: 100, top: 0 })
+      return
+    }
+
+    const height = Math.max(18, (element.clientHeight / element.scrollHeight) * 100)
+    const top = (element.scrollTop / maxScroll) * (100 - height)
+    setSummaryScroll({ height, top })
+  }
+
+  useEffect(() => {
+    updateSummaryScroll()
+    window.addEventListener("resize", updateSummaryScroll)
+    return () => window.removeEventListener("resize", updateSummaryScroll)
+  }, [summary])
+
   return (
-    <section className="rounded-3xl bg-gradient-to-br from-[#1c3557] to-[#2a3f6e] p-4 text-white">
+    <section className="flex h-full min-h-[23rem] min-w-0 flex-col overflow-hidden rounded-3xl bg-gradient-to-br from-[#1c3557] to-[#2a3f6e] p-4 text-white lg:h-[34rem]">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/55">
@@ -105,6 +148,34 @@ export default function SummaryHeader({ score, verdict, policyName, t }) {
           {t.scoreGuideButton}
         </button>
       </div>
+
+      {summary ? (
+        <div className="relative mt-4 flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-left">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-white/45">
+            {t.generalSummary}
+          </p>
+          <p
+            ref={summaryRef}
+            onScroll={updateSummaryScroll}
+            className="mt-2 min-h-0 max-w-full flex-1 overflow-y-scroll pr-5 text-sm font-medium leading-6 text-white/82 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          >
+            <ExplainedText
+              text={trimSummary(summary)}
+              terms={tooltipTerms}
+              severity="light"
+            />
+          </p>
+          <div className="pointer-events-none absolute bottom-3 right-3 top-10 w-1.5 rounded-full bg-white/15">
+            <div
+              className="absolute left-0 w-1.5 rounded-full bg-white/60"
+              style={{
+                height: `${summaryScroll.height}%`,
+                top: `${summaryScroll.top}%`,
+              }}
+            />
+          </div>
+        </div>
+      ) : null}
 
       {showScoreInfo ? (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-[#12152a]/45 px-4 backdrop-blur-sm">

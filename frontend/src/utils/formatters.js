@@ -37,6 +37,15 @@ export function summaryPoints(category, fallback, limit = 4) {
     .slice(0, limit)
 }
 
+export function inlineExplanations(items = []) {
+  return items
+    .map((item) => ({
+      term: item.term || item.phrase,
+      definition: item.definition || item.explanation,
+    }))
+    .filter((item) => item.term && item.definition)
+}
+
 export function scoreLabel(score) {
   if (score >= 80) {
     return { label: "Privacy-Friendly", color: "text-green-700" }

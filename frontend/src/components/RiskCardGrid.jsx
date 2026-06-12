@@ -1,6 +1,12 @@
 import { Activity, ChevronRight, Clock, Crosshair, Eye, Users } from "lucide-react"
 
-import { cardSeverityColor, severityBadge, summaryPoints } from "../utils/formatters.js"
+import ExplainedText from "./ExplainedText.jsx"
+import {
+  cardSeverityColor,
+  inlineExplanations,
+  severityBadge,
+  summaryPoints,
+} from "../utils/formatters.js"
 
 const icons = {
   "Data Collection": Eye,
@@ -12,31 +18,24 @@ const icons = {
   "Cookies & Tracking": Crosshair,
 }
 
-function shorten(text) {
-  if (!text) {
-    return ""
-  }
-
-  return text.length > 62 ? `${text.slice(0, 59)}...` : text
-}
-
-export default function RiskCardGrid({ categories, onSelect, t }) {
+export default function RiskCardGrid({ categories, keyTerms = [], onSelect, t }) {
   return (
-    <section className="px-0">
-      <p className="mb-3 text-xs font-black uppercase tracking-[0.18em] text-slate-500">
+    <section className="flex min-h-[23rem] flex-col px-0 lg:h-[34rem]">
+      <p className="sr-only">
         {t.riskBreakdown}
       </p>
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid flex-1 grid-cols-2 grid-rows-2 gap-3">
         {categories.map((category) => {
           const Icon = icons[category.name] || Activity
-          const points = summaryPoints(category, t.tapForDetails, 3)
+          const points = summaryPoints(category, t.tapForDetails, 6)
+          const tooltipTerms = [...keyTerms, ...inlineExplanations(category.explanations)]
 
           return (
             <button
               key={category.name}
               type="button"
               onClick={() => onSelect(category)}
-              className={`flex min-h-32 flex-col gap-2.5 rounded-2xl border p-4 text-left transition active:scale-[0.97] ${
+              className={`flex min-h-0 min-w-0 flex-col gap-2 overflow-hidden rounded-2xl border p-4 text-left transition active:scale-[0.97] ${
                 cardSeverityColor[category.severity] || cardSeverityColor.yellow
               }`}
             >
@@ -52,18 +51,25 @@ export default function RiskCardGrid({ categories, onSelect, t }) {
                   {t.severityLabels[category.severity] || t.severityLabels.yellow}
                 </span>
               </div>
-              <div>
-                <h2 className="text-sm font-black leading-tight text-slate-950">
+              <div className="min-w-0 overflow-hidden">
+                <h2 className="truncate text-sm font-black leading-tight text-slate-950">
                   {category.displayName || category.name}
                 </h2>
-                <ul className="mt-2 space-y-1.5">
+                <ul className="mt-2 grid gap-1.5 overflow-hidden">
                   {points.map((point, index) => (
                     <li
                       key={`${point}-${index}`}
-                      className="flex gap-1.5 text-[11px] leading-snug text-slate-600"
+                      className="flex min-h-0 gap-1.5 text-[11px] leading-snug text-slate-600"
                     >
                       <span className="mt-[0.35rem] h-1 w-1 shrink-0 rounded-full bg-slate-400" />
-                      <span>{shorten(point)}</span>
+                      <span className="line-clamp-2 min-w-0 overflow-hidden">
+                        <ExplainedText
+                          text={point}
+                          terms={tooltipTerms}
+                          severity={category.severity}
+                          interactive={false}
+                        />
+                      </span>
                     </li>
                   ))}
                 </ul>

@@ -10,7 +10,6 @@ import RiskCardGrid from "../components/RiskCardGrid.jsx"
 import RiskCategoryModal from "../components/RiskCategoryModal.jsx"
 import RotatingSubtitle from "../components/RotatingSubtitle.jsx"
 import SummaryHeader from "../components/SummaryHeader.jsx"
-import SummaryParagraph from "../components/SummaryParagraph.jsx"
 import TraceabilityModal from "../components/TraceabilityModal.jsx"
 import { useAnalyze } from "../hooks/useAnalyze.js"
 import { cardSpacing, summaryPoints } from "../utils/formatters.js"
@@ -38,6 +37,50 @@ const cardTargets = [
     labelKey: "tracking",
     aliases: ["Cookies & Tracking", "Tracking", "Cookies"],
   },
+]
+
+const fallbackTerms = {
+  EN: [
+    {
+      term: "Retention period",
+      definition: "How long a company keeps your data before deleting or anonymizing it.",
+      aliases: ["retention", "keep your data", "keeps your data"],
+    },
+    {
+      term: "Behavioral data",
+      definition: "Information about what you do in an app or service, such as clicks, searches, views, and interactions.",
+      aliases: ["behavioral data", "activity", "interactions", "usage"],
+    },
+    {
+      term: "Third-party sharing",
+      definition: "When a company gives or sends your information to another company, partner, advertiser, or service provider.",
+      aliases: ["third party", "third-party", "partners", "service provider"],
+    },
+    {
+      term: "Targeted advertising",
+      definition: "Ads selected using information about you, such as your activity, interests, location, or profile.",
+      aliases: ["targeted advertising", "advertising", "ads", "personalization"],
+    },
+    {
+      term: "Consent",
+      definition: "Permission you give for a company to collect, use, or share your information.",
+      aliases: ["consent", "permission", "agree"],
+    },
+  ],
+}
+
+const riskPhraseCandidates = [
+  "personal data",
+  "sensitive data",
+  "behavioral data",
+  "third-party sharing",
+  "third parties",
+  "targeted advertising",
+  "advertising",
+  "tracking",
+  "retention",
+  "location",
+  "limited rights",
 ]
 
 function findCategory(categories, aliases) {
@@ -74,6 +117,34 @@ function recipientsFor(category, t) {
   return recipients.slice(0, 3)
 }
 
+function fallbackHighlightPhrases(category) {
+  const text = `${category.summary || ""} ${summaryPoints(category).join(" ")}`.toLowerCase()
+
+  return riskPhraseCandidates.filter((phrase) => text.includes(phrase)).slice(0, 3)
+}
+
+function keyTermsFor(result, selectedLanguage) {
+  const terms = result?.key_terms || []
+  if (terms.length) {
+    return terms
+  }
+
+  const text = [
+    result?.summary,
+    ...(result?.categories || []).flatMap((category) => [
+      category.summary,
+      ...(category.summary_points || []),
+    ]),
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+
+  return (fallbackTerms[selectedLanguage.code] || [])
+    .filter((term) => term.aliases.some((alias) => text.includes(alias)))
+    .map(({ term, definition }) => ({ term, definition }))
+}
+
 function buildDashboardCategories(result, t) {
   if (!result) {
     return []
@@ -92,6 +163,9 @@ function buildDashboardCategories(result, t) {
       displayName: t.categoryLabels[target.labelKey],
       clause,
       flags: result.flags,
+      highlight_phrases: source.highlight_phrases?.length
+        ? source.highlight_phrases
+        : fallbackHighlightPhrases(source),
     }
 
     return {
@@ -134,6 +208,7 @@ export default function Home() {
   const t = getTranslations(selectedLanguage.code)
   const dashboardCategories = buildDashboardCategories(result, t)
   const currentPolicyLabel = policyLabel(urlInput, textInput, inputMode, t)
+  const keyTerms = keyTermsFor(result, selectedLanguage)
 
   function analyzeCurrentPolicy() {
     setUploadOpen(false)
@@ -249,18 +324,25 @@ export default function Home() {
 
             <ErrorMessage message={error} />
 
-            <div className="grid gap-4 lg:grid-cols-[minmax(340px,390px)_minmax(0,1fr)] lg:items-start lg:gap-5">
+            <div className="grid gap-4 lg:grid-cols-[minmax(340px,390px)_minmax(0,1fr)] lg:items-stretch lg:gap-5">
               <div className="lg:sticky lg:top-6">
                 <SummaryHeader
                   score={result.score}
                   verdict={result.verdict}
                   policyName={currentPolicyLabel}
+                  summary={result.summary}
+                  keyTerms={keyTerms}
+                  explanations={result.summary_explanations || []}
                   t={t}
                 />
               </div>
               <div className="grid gap-4 lg:min-w-0">
-                <RiskCardGrid categories={dashboardCategories} onSelect={setActiveCategory} t={t} />
-                <SummaryParagraph summary={result.summary} />
+                <RiskCardGrid
+                  categories={dashboardCategories}
+                  keyTerms={keyTerms}
+                  onSelect={setActiveCategory}
+                  t={t}
+                />
                 <p className="px-4 text-center text-[11px] font-medium leading-5 text-slate-400 lg:px-0 lg:text-left">
                   {t.aiFooter}
                 </p>
@@ -273,6 +355,7 @@ export default function Home() {
         category={activeCategory}
         onClose={() => setActiveCategory(null)}
         onShowTrace={showTraceForCategory}
+        keyTerms={keyTerms}
         t={t}
       />
       {showTraceModal ? (
